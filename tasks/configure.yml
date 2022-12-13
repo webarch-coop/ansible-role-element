@@ -1,0 +1,69 @@
+---
+- name: Configure Element
+  block:
+
+    - name: Element config present
+      ansible.builtin.template:
+        src: config.json.j2
+        dest: "/opt/element-{{ element_tag_proposed }}/config.{{ element_domain }}.json"
+        backup: true
+        mode: 0644
+        owner: root
+        group: root
+      register: element_configured
+
+    - name: Element symlinked
+      ansible.builtin.file:
+        src: "/opt/element-{{ element_tag_proposed }}"
+        dest: /var/www/element
+        state: link
+        follow: false
+        mode: 0777
+        owner: root
+        group: root
+      register: element_symlinked
+
+    - name: Nginx config present
+      ansible.builtin.template:
+        src: nginx.conf.j2
+        dest: "/etc/nginx/sites-available/{{ element_domain }}.conf"
+        backup: true
+        mode: 0644
+        owner: root
+        group: root
+      register: element_nginx_site_available
+      when:
+        - element_key.stat.exists | bool
+        - element_cert.stat.exists | bool
+      notify: Restart nginx
+
+    - name: Stat Nginx config
+      ansible.builtin.stat:
+        path: "/etc/nginx/sites-available/{{ element_domain }}.conf"
+      register: element_nginx_site_available_conf
+
+    - name: Enable Ngnix config
+      block:
+
+        - name: Ngnix config symlinked
+          ansible.builtin.file:
+            state: link
+            src: "/etc/nginx/sites-available/{{ element_domain }}.conf"
+            dest: "/etc/nginx/sites-enabled/{{ element_domain }}.conf"
+            follow: false
+            mode: 0777
+            owner: root
+            group: root
+          notify: Restart nginx
+
+        - name: Nginx configtest # noqa yaml[comments] command-instead-of-module
+          ansible.builtin.command: service nginx configtest
+          check_mode: false
+          changed_when: false
+          register: element_nginx_configtest
+
+      when: element_nginx_site_available_conf.stat.exists | bool
+
+  tags:
+    - element
+...

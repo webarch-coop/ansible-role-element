@@ -1,0 +1,85 @@
+---
+- name: Download Element
+  block:
+
+    - name: Element GPG key present
+      ansible.builtin.get_url:
+        url: https://packages.riot.im/element-release-key.asc
+        dest: /root/element-release-key.asc
+        checksum: "{{ element_gpg_sha256 }}"
+
+    - name: Stat Element GPG key
+      ansible.builtin.stat:
+        path: /root/element-release-key.asc
+      register: element_gpg_path
+
+    - name: Element GPG key imported
+      ansible.builtin.command: gpg --no-tty --import /root/element-release-key.asc
+      register: element_gpg_import
+      changed_when: ( "not changed" not in element_gpg_import.stderr )
+      when: element_gpg_path.stat.exists
+
+    - name: Debug GPG key import
+      ansible.builtin.debug:
+        var: element_gpg_import
+
+    - name: Element GPG signature present
+      ansible.builtin.get_url:
+        url: "https://github.com/vector-im/element-web/releases/download/{{ element_tag_proposed }}/element-{{ element_tag_proposed }}.tar.gz.asc"
+        dest: "/opt/element-{{ element_tag_proposed }}.tar.gz.asc"
+      register: element_gpg_sig
+
+    - name: Stat Element GPG signature path
+      ansible.builtin.stat:
+        path: "/opt/element-{{ element_tag_proposed }}.tar.gz.asc"
+      register: element_gpg_sig_path
+
+    - name: Element TGZ present
+      ansible.builtin.get_url:
+        url: "https://github.com/vector-im/element-web/releases/download/{{ element_tag_proposed }}/element-{{ element_tag_proposed }}.tar.gz"
+        dest: "/opt/element-{{ element_tag_proposed }}.tar.gz"
+      register: element_tgz
+
+    - name: Stat Element TGZ
+      ansible.builtin.stat:
+        path: "/opt/element-{{ element_tag_proposed }}.tar.gz"
+      register: element_tgz_path
+
+    - name: Element GPG signature checked
+      ansible.builtin.command: >-
+        gpg --no-tty --verify --logger-fd 1
+        "/opt/element-{{ element_tag_proposed }}.tar.gz.asc"
+        "/opt/element-{{ element_tag_proposed }}.tar.gz"
+      register: element_gpg_check
+      changed_when: false
+      check_mode: false
+      failed_when: >-
+        ( element_gpg_check.rc != 0 ) or
+        ( "Good signature from" not in element_gpg_check.stdout )
+      when:
+        - element_gpg_import.rc == 0
+        - element_gpg_sig_path.stat.exists | bool
+        - element_tgz_path.stat.exists | bool
+
+    - name: Debug GPG signature check
+      ansible.builtin.debug:
+        var: element_gpg_check.stdout_lines
+        verbosity: 2
+
+    - name: Element unarchived
+      ansible.builtin.unarchive:
+        src: "/opt/element-{{ element_tag_proposed }}.tar.gz"
+        dest: /opt
+        remote_src: true
+        owner: root
+        group: root
+      register: element_unarchive
+
+    - name: Debug Element unarchived
+      ansible.builtin.debug:
+        var: element_unarchive
+        verbosity: 2
+
+  tags:
+    - element
+...

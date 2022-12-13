@@ -1,0 +1,4 @@
+---
+# wget https://packages.riot.im/element-release-key.asc -qO - | sha256sum | sed 's/^/sha256:/' | awk '{ print $1 }' | sed 's/^/"/' | sed 's/$/"/'
+element_gpg_sha256: "sha256:b6683a2383d6dd34ab571622c90e71fb05451af4310421ec15327a8b04347b98"
+...

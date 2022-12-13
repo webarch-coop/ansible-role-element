@@ -1,0 +1,109 @@
+---
+- name: Element checks
+  block:
+
+    - name: Check that the proposed version of Element is latest or a semver >= 1.11.16
+      ansible.builtin.assert:
+        that: >-
+          ( element_version == "latest" ) or
+          ( element_version is ansible.builtin.version('1.11.16', '>=', version_type='semver') )
+        quiet: "{% if ansible_verbosity == 0 %}true{% else %}false{% endif %}"
+
+    - name: Check the latest version of Element
+      ansible.builtin.uri:
+        url: https://github.com/vector-im/element-web/releases/latest
+        method: HEAD
+        status_code: 302
+        follow_redirects: none
+      check_mode: false
+      changed_when: false
+      register: element_headers
+
+    - name: Debug Element latest headers
+      ansible.builtin.debug:
+        msg:
+          - "Location: {{ element_headers.location }}"
+          - "Path: {{ element_headers.location | ansible.builtin.urlsplit('path') }}"
+          - "Tag: {{ element_headers.location | ansible.builtin.urlsplit('path') | ansible.builtin.basename }}"
+          - "Version: {{ element_headers.location | ansible.builtin.urlsplit('path') | ansible.builtin.basename | ansible.builtin.regex_replace('^v') }}"
+        verbosity: 2
+
+    - name: Set a fact for the latest tag and version of Element
+      ansible.builtin.set_fact:
+        element_tag_latest: "{{ element_headers.location | ansible.builtin.urlsplit('path') | ansible.builtin.basename }}"
+        element_version_latest: "{{ element_headers.location | ansible.builtin.urlsplit('path') | ansible.builtin.basename | ansible.builtin.regex_replace('^v') }}"
+
+    - name: Set a fact for the proposed tag and version of Element
+      ansible.builtin.set_fact:
+        element_tag_proposed: "{% if element_version == 'latest' %}{{ element_tag_latest }}{% else %}v{{ element_version }}{% endif %}" 
+        element_version_proposed: "{% if element_version == 'latest' %}{{ element_version_latest }}{% else %}{{ element_version }}{% endif %}"
+
+    - name: Check the existing version of Element
+      ansible.builtin.stat:
+        path: /var/www/element
+      register: element_symlink
+
+    - name: Debug the Element symlink
+      ansible.builtin.debug:
+        var: element_symlink
+        verbosity: 2
+
+    - name: Set a fact to indicate that Element is not installed
+      ansible.builtin.set_fact:
+        element_tag_existing: none
+        element_version_existing: none
+      when: not element_symlink.stat.exists | bool
+
+    - name: Set a fact to indicate that Element is installed
+      ansible.builtin.set_fact:
+        element_tag_existing: "{{ element_symlink.stat.lnk_target | ansible.builtin.basename | ansible.builtin.regex_replace('^element-') }}"
+        element_version_existing: "{{ element_symlink.stat.lnk_target | ansible.builtin.basename | ansible.builtin.regex_replace('^element-v') }}"
+      when: 
+        - element_symlink.stat.exists | bool
+        - element_symlink.stat.islnk | bool
+
+    - name: Stat the TLS certificate path
+      ansible.builtin.stat:
+        path: "{{ element_certificate_path }}"
+      register: element_cert
+
+    - name: Debug element_cert
+      ansible.builtin.debug:
+        var: element_cert
+        verbosity: 2
+
+    - name: Stat the TLS key path
+      ansible.builtin.stat:
+        path: "{{ element_private_key_path }}"
+      register: element_key
+
+    - name: Debug element_key
+      ansible.builtin.debug:
+        var: element_key
+        verbosity: 2
+
+    - name: Check the cert when it is present
+      block:
+
+        - name: Read TLS cert information
+          community.crypto.x509_certificate_info:
+            path: "{{ element_certificate_path }}"
+            valid_at:
+              tomorrow: "+1d"
+          register: element_cert_info
+
+        - name: Debug cert info
+          ansible.builtin.debug:
+            var: element_cert_info
+            verbosity: 3
+
+        - name: Check that the cert is not a ECC one and is valid tomorrow
+          ansible.builtin.assert:
+            that:
+              - element_cert_info.valid_at.tomorrow | bool
+
+      when: element_cert.stat.exists | bool
+
+  tags:
+    - element
+...

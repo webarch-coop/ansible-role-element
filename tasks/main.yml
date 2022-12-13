@@ -1,0 +1,21 @@
+---
+- name: Install, configure and update Element
+  block:
+
+    - name: Check tasks
+      ansible.builtin.include_tasks: check.yml
+
+    - name: Download Element when it is not present
+      ansible.builtin.include_tasks: download.yml
+      when: >-
+        ( element_version_existing == "none" ) or
+        ( element_tag_existing != element_tag_proposed )
+
+    - name: Configure Element
+      ansible.builtin.include_tasks: configure.yml
+
+  when: element | bool
+  tags:
+    - element
+...
+
