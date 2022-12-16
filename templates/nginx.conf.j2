@@ -1,14 +1,30 @@
 # {{ ansible_managed }}
+
 server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-    server_name {{ element_domain }}; 
-    root /var/www/element;
-    ssl_certificate "{{ element_certificate_path }}";
-    ssl_certificate_key "{{ element_private_key_path }}";
-    add_header X-Frame-Options SAMEORIGIN;
-    add_header X-Content-Type-Options nosniff;
-    add_header X-XSS-Protection "1; mode=block";
-    add_header Content-Security-Policy "frame-ancestors 'none'";
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  server_name {{ element_domain }}; 
+  root /var/www/element;
+  ssl_certificate "{{ element_certificate_path }}";
+  ssl_certificate_key "{{ element_private_key_path }}";
+  add_header X-Frame-Options SAMEORIGIN;
+  add_header X-Content-Type-Options nosniff;
+  add_header X-XSS-Protection "1; mode=block";
+  add_header Content-Security-Policy "frame-ancestors 'none'";
+}
+
+{% if element_domain_redirects is defined and element_domain_redirects != [] %}
+server {
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  server_name{% for element_domain_redirect in element_domain_redirects %} {{ element_domain_redirect }}{% endfor %};
+  ssl_certificate "{{ element_certificate_path }}";
+  ssl_certificate_key "{{ element_private_key_path }}";
+  root /var/www/html;
+  location / {
+    return 301 https://{{ element_domain }}/;
   }
+}
+{% endif %}
+
 # vim: syntax=nginx

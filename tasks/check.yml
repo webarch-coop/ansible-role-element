@@ -35,7 +35,7 @@
 
     - name: Set a fact for the proposed tag and version of Element
       ansible.builtin.set_fact:
-        element_tag_proposed: "{% if element_version == 'latest' %}{{ element_tag_latest }}{% else %}v{{ element_version }}{% endif %}" 
+        element_tag_proposed: "{% if element_version == 'latest' %}{{ element_tag_latest }}{% else %}v{{ element_version }}{% endif %}"
         element_version_proposed: "{% if element_version == 'latest' %}{{ element_version_latest }}{% else %}{{ element_version }}{% endif %}"
 
     - name: Check the existing version of Element
@@ -58,7 +58,7 @@
       ansible.builtin.set_fact:
         element_tag_existing: "{{ element_symlink.stat.lnk_target | ansible.builtin.basename | ansible.builtin.regex_replace('^element-') }}"
         element_version_existing: "{{ element_symlink.stat.lnk_target | ansible.builtin.basename | ansible.builtin.regex_replace('^element-v') }}"
-      when: 
+      when:
         - element_symlink.stat.exists | bool
         - element_symlink.stat.islnk | bool
 
@@ -97,7 +97,7 @@
             var: element_cert_info
             verbosity: 3
 
-        - name: Check that the cert is not a ECC one and is valid tomorrow
+        - name: Check that the cert is valid tomorrow
           ansible.builtin.assert:
             that:
               - element_cert_info.valid_at.tomorrow | bool

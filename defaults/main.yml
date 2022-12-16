@@ -44,6 +44,8 @@ element_config: &element_config_defaults
     brand: Element Call
   map_style_url: https://api.maptiler.com/maps/streets/style.json?key=fU3vlMsMn4Jb6dnEIFsx
 element_domain: "{{ inventory_hostname }}"
+element_domain_redirects:
+  - "www.{{ element_domain }}"
 element_private_key_path: "/etc/ssl/le/{{ element_domain }}.key.pem"
 element_version: latest
 ...

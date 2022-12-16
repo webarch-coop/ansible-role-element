@@ -23,6 +23,24 @@
         group: root
       register: element_symlinked
 
+    - name: Provision a TLS cert if one doesn't exist
+      block:
+
+        - name: Include the acme.sh / Let's Encrypt role
+          ansible.builtin.include_role:
+            name: acmesh
+            tasks_from: letsencrypt.yml
+          vars:
+            acmesh_common_name: "{{ element_domain }}"
+            acmesh_subject_alt_names: "{{ element_domain_redirects }}"
+
+        - name: Include the check tasks
+          ansible.builtin.include_tasks: check.yml
+
+      when: >-
+        ( not element_cert.stat.exists | bool ) or
+        ( not element_key.stat.exists | bool )
+
     - name: Nginx config present
       ansible.builtin.template:
         src: nginx.conf.j2

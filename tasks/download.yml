@@ -7,6 +7,9 @@
         url: https://packages.riot.im/element-release-key.asc
         dest: /root/element-release-key.asc
         checksum: "{{ element_gpg_sha256 }}"
+        mode: 0640
+        owner: root
+        group: root
 
     - name: Stat Element GPG key
       ansible.builtin.stat:
@@ -27,6 +30,9 @@
       ansible.builtin.get_url:
         url: "https://github.com/vector-im/element-web/releases/download/{{ element_tag_proposed }}/element-{{ element_tag_proposed }}.tar.gz.asc"
         dest: "/opt/element-{{ element_tag_proposed }}.tar.gz.asc"
+        mode: 0640
+        owner: root
+        group: root
       register: element_gpg_sig
 
     - name: Stat Element GPG signature path
@@ -38,6 +44,9 @@
       ansible.builtin.get_url:
         url: "https://github.com/vector-im/element-web/releases/download/{{ element_tag_proposed }}/element-{{ element_tag_proposed }}.tar.gz"
         dest: "/opt/element-{{ element_tag_proposed }}.tar.gz"
+        mode: 0640
+        owner: root
+        group: root
       register: element_tgz
 
     - name: Stat Element TGZ
