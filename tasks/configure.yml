@@ -74,7 +74,7 @@
             group: root
           notify: Restart nginx
 
-        - name: Nginx configtest # noqa yaml[comments] command-instead-of-module
+        - name: Nginx configtest  # noqa yaml[comments] command-instead-of-module
           ansible.builtin.command: service nginx configtest
           check_mode: false
           changed_when: false
