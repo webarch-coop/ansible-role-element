@@ -1,11 +1,11 @@
 ---
 element: false
 element_certificate_path: "/etc/ssl/le/{{ element_domain }}.fullchain.pem"
-element_config: &element_config_defaults
+element_config:
   default_server_config:
     m.homeserver:
-      base_url: https://matrix-client.matrix.org
-      server_name: matrix.org
+      base_url: "https://{{ element_domain }}"
+      server_name: "{{ element_matrix_domain }}"
     m.identity_server:
       base_url: https://vector.im
   disable_custom_urls: false
@@ -26,26 +26,28 @@ element_config: &element_config_defaults
   default_country_code: GB
   show_labs_settings: false
   features: {}
-  default_federate: true
+  default_federate: false
   default_theme: light
   room_directory:
     servers:
-      - matrix.org
+      - "{{ element_matrix_domain }}"
   enable_presence_by_hs_url:
-    https://matrix.org: false
-    https://matrix-client.matrix.org: false
+    "https://{{ element_matrix_domain }}": false
+    "https://{{ element_domain }}": false
   setting_defaults:
     breadcrumbs: true
-  jitsi:
-    preferred_domain: meet.element.io
-  element_call:
-    url: https://call.element.io
-    participant_limit: 8
-    brand: Element Call
-  map_style_url: https://api.maptiler.com/maps/streets/style.json?key=fU3vlMsMn4Jb6dnEIFsx
+  # jitsi:
+  #   preferred_domain: meet.element.io
+  # element_call:
+  #   url: https://call.element.io
+  #   participant_limit: 8
+  #   brand: Element Call
+  # map_style_url: https://api.maptiler.com/maps/streets/style.json?key=fU3vlMsMn4Jb6dnEIFsx
+  permalink_prefix: "https://{{ element_domain }}"
 element_domain: "{{ inventory_hostname }}"
 element_domain_redirects:
   - "www.{{ element_domain }}"
+element_matrix_domain: "{{ inventory_hostname }}"
 element_private_key_path: "/etc/ssl/le/{{ element_domain }}.key.pem"
 element_version: latest
 ...

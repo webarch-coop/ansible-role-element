@@ -13,6 +13,11 @@ argument_specs:
         type: str
         required: true
         description: The Element domain name.
+      element_domain_redirects:
+        type: list
+        elements: str
+        required: false
+        description: A list of domain names to redirect to element_domain.
       element_version:
         type: str
         required: false
