@@ -38,6 +38,7 @@
           ansible.builtin.include_tasks: check.yml
 
       when: >-
+        ( 
         ( not element_cert.stat.exists | bool ) or
         ( not element_key.stat.exists | bool )
 
