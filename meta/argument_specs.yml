@@ -9,7 +9,11 @@ argument_specs:
         type: bool
         required: true
         description: Run the tasks in this role.
-      element_certificate_path:
+      element_ca_path:
+        type: str
+        required: true
+        description: Path to the Element TLS CA certificate.
+      element_cert_path:
         type: str
         required: true
         description: Path to the Element TLS certificate.

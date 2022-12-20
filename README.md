@@ -10,9 +10,13 @@ The following [defaults/main.yml](defaults/main.yml) are defined:
 
 `element` a boolean, when `true` tasks in this role are run, it defaults to `false`.
 
-### element_certificate_path
+### element_ca_path
 
-`element_certificate_path` is the path to the TLS certificate for the `element_domain`.
+`element_ca_path` is the path to the TLS certificate authority (CA) certificate for the `element_domain`.
+
+### element_cert_path
+
+`element_cert_path` is the path to the TLS certificate for the `element_domain`.
 
 ### element_config
 
