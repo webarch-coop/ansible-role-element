@@ -82,6 +82,16 @@
         var: element_key
         verbosity: 2
 
+    - name: Stat the TLS CA path
+      ansible.builtin.stat:
+        path: "{{ element_ca_path }}"
+      register: element_ca
+
+    - name: Debug element_ca
+      ansible.builtin.debug:
+        var: element_ca
+        verbosity: 2
+
     - name: Check the cert when it is present
       block:
 
