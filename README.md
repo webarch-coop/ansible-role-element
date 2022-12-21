@@ -1,10 +1,10 @@
 # Webarchitects Element Ansible role
 
-An Ansible role to install and configure the [Element](https://github.com/vector-im/element-web) Matrix web client.
+An Ansible role to install and configure the [Element](https://github.com/vector-im/element-web) Matrix web client, see also the [synapse-server](https://git.coop/webarch/synapse-server) repo for an example of how to use this role.
 
-## Defaults
+## Role variables
 
-The following [defaults/main.yml](defaults/main.yml) are defined:
+See the [defaults/main.yml](defaults/main.yml) file for the default variables and [meta/argument_spacs.yml](meta/argument_specs.yml) for the variable specification.
 
 ### element
 
@@ -41,3 +41,17 @@ The following [defaults/main.yml](defaults/main.yml) are defined:
 ### element_version
 
 `element_version` is the version of Element to install, this can either be set to `latest`, the default or [a version number](https://github.com/vector-im/element-web/releases).
+
+## Dependencies
+
+This role requires Ansible `2.13` or newer plus [JC](https://pypi.org/project/jc/) and [JMESPath](https://pypi.org/project/jmespath/) to be installed using `pip3` on the Ansible controller.
+
+## Repository
+
+The primary URL of this repo is [`https://git.coop/webarch/element`](https://git.coop/webarch/element) however it is also [mirrored to GitHub](https://github.com/webarch-coop/ansible-role-element) and [available via Ansible Galaxy](https://galaxy.ansible.com/chriscroome/element).
+
+If you use this role please use a tagged release, see [the release notes](https://git.coop/webarch/element/-/releases).
+
+## License
+
+This role is released under [the same terms as Ansible itself](https://github.com/ansible/ansible/blob/devel/COPYING), the [GNU GPLv3](LICENSE).
