@@ -109,7 +109,7 @@
 
         - name: Set a fact for the list of subjectAltNames
           ansible.builtin.set_fact:
-            element_cert_info_sans: "{{ element_cert_info.subject_alt_name | map('regex_replace', '^DNS:') }}"
+            element_cert_info_sans: "{{ element_cert_info.subject_alt_name | map('regex_replace', '^DNS:') | sort }}"
 
         - name: Debug cert info subjectAltNames
           ansible.builtin.debug:
