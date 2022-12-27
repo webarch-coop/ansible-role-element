@@ -39,7 +39,8 @@
 
       when: >-
         ( not element_cert.stat.exists | bool ) or
-        ( not element_key.stat.exists | bool )
+        ( not element_key.stat.exists | bool ) or
+        ( element_cert_info.subject.commonName != element_matrix_domain )
 
     - name: Nginx config present
       ansible.builtin.template:

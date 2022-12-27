@@ -107,6 +107,15 @@
             var: element_cert_info
             verbosity: 3
 
+        - name: Set a fact for the list of subjectAltNames
+          ansible.builtin.set_fact:
+            element_cert_info_sans: "{{ element_cert_info.subject_alt_name | map('regex_replace', '^DNS:') }}"
+
+        - name: Debug cert info subjectAltNames
+          ansible.builtin.debug:
+            var: element_cert_info_sans
+            verbosity: 3
+
         - name: Check that the cert is valid tomorrow
           ansible.builtin.assert:
             that:
