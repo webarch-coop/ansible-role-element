@@ -23,7 +23,7 @@
         group: root
       register: element_symlinked
 
-    - name: Provision a TLS cert if one doesn't exist
+    - name: Provision a TLS cert if it doesn't exist or it doesn't contain the correct names
       block:
 
         - name: Include the acme.sh / Let's Encrypt role
@@ -62,10 +62,10 @@
         path: "/etc/nginx/sites-available/{{ element_domain }}.conf"
       register: element_nginx_site_available_conf
 
-    - name: Enable Ngnix config
+    - name: Enable Nginx config
       block:
 
-        - name: Ngnix config symlinked
+        - name: Nginx config symlinked
           ansible.builtin.file:
             state: link
             src: "/etc/nginx/sites-available/{{ element_domain }}.conf"
