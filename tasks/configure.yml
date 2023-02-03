@@ -15,8 +15,8 @@
     - name: Copy files to the Element directory
       ansible.builtin.copy:
         src: "{{ element_path.src }}"
-        dest: "{{ element.dest }}"
-        mode: "{{ element.mode }}"
+        dest: "{{ element_path.dest }}"
+        mode: "{{ element_path.mode }}"
         owner: "{{ element_path.owner | default('root') }}"
         group: "{{ element_path.group | default('root') }}"
       loop: "{{ element_copy }}"
