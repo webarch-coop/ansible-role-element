@@ -4,15 +4,22 @@
 
     - name: Check tasks
       ansible.builtin.include_tasks: check.yml
+      tags:
+        - element_config
+        - element_download
 
     - name: Download Element when it is not present
       ansible.builtin.include_tasks: download.yml
       when: >-
         ( element_version_existing == "none" ) or
         ( element_tag_existing != element_tag_proposed )
+      tags:
+        - element_download
 
     - name: Configure Element
       ansible.builtin.include_tasks: configure.yml
+      tags:
+        - element_config
 
   when: element | bool
   tags:
