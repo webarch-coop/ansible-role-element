@@ -12,6 +12,20 @@
         group: root
       register: element_configured
 
+    - name: Copy files to the Element directory
+      ansible.builtin.copy:
+        src: "{{ element_path.src }}"
+        dest: "{{ element.dest }}"
+        mode: "{{ element.mode }}"
+        owner: "{{ element_path.owner | default('root') }}"
+        group: "{{ element_path.group | default('root') }}"
+      loop: "{{ element_copy }}"
+      loop_control:
+        loop_var: element_path
+      when:
+        - element_copy is defined
+        - element_copy != []
+
     - name: Element symlinked
       ansible.builtin.file:
         src: "/opt/element-{{ element_tag_proposed }}"

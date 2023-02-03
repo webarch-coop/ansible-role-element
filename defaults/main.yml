@@ -50,5 +50,9 @@ element_domain_redirects:
   - "www.{{ element_domain }}"
 element_matrix_domain: "{{ inventory_hostname }}"
 element_key_path: "/etc/ssl/le/{{ element_domain }}.key.pem"
+# element_copy:
+#   - src: ~/ansible/background.jpg
+#     dest: themes/element/img/backgrounds/lake.jpg
+#     mode: "0644"
 element_version: latest
 ...

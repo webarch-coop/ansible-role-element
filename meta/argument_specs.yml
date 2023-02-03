@@ -21,6 +21,31 @@ argument_specs:
         type: dict
         required: true
         description: Element configuration dictionary.
+      element_copy:
+        type: list
+        required: false
+        description: A list of paths for uploading files to the Element directory.
+        options:
+          dest:
+            type: str
+            required: true
+            description: A path on the server.
+          group:
+            type: str
+            required: false
+            description: The group for the file.
+          mode:
+            type: str
+            required: true
+            description: The file or directory mode.
+          owner:
+            type: str
+            required: false
+            description: The owner of the file.
+          src:
+            type: str
+            required: true
+            description: A path on the Ansible controller.
       element_domain:
         type: str
         required: true
