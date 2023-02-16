@@ -1,3 +1,12 @@
+# Copyright 2022-2023 Chris Croome
+#
+# This file is part of the Webarchitects Element Ansible role.
+#
+# The Webarchitects Element Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Element Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Element Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
 - name: Configure Element
   block:
@@ -7,7 +16,7 @@
         src: config.json.j2
         dest: "/opt/element-{{ element_tag_proposed }}/config.{{ element_domain }}.json"
         backup: true
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
       register: element_configured
@@ -32,7 +41,7 @@
         dest: /var/www/element
         state: link
         follow: false
-        mode: 0777
+        mode: "0777"
         owner: root
         group: root
       register: element_symlinked
@@ -62,7 +71,7 @@
         src: nginx.conf.j2
         dest: "/etc/nginx/sites-available/{{ element_domain }}.conf"
         backup: true
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
       register: element_nginx_site_available
@@ -85,7 +94,7 @@
             src: "/etc/nginx/sites-available/{{ element_domain }}.conf"
             dest: "/etc/nginx/sites-enabled/{{ element_domain }}.conf"
             follow: false
-            mode: 0777
+            mode: "0777"
             owner: root
             group: root
           notify: Restart nginx

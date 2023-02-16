@@ -1,3 +1,12 @@
+# Copyright 2022-2023 Chris Croome
+#
+# This file is part of the Webarchitects Element Ansible role.
+#
+# The Webarchitects Element Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Element Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Element Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
 - name: Download Element
   block:
@@ -7,7 +16,7 @@
         url: https://packages.riot.im/element-release-key.asc
         dest: /root/element-release-key.asc
         checksum: "{{ element_gpg_sha256 }}"
-        mode: 0640
+        mode: "0640"
         owner: root
         group: root
 
@@ -30,7 +39,7 @@
       ansible.builtin.get_url:
         url: "https://github.com/vector-im/element-web/releases/download/{{ element_tag_proposed }}/element-{{ element_tag_proposed }}.tar.gz.asc"
         dest: "/opt/element-{{ element_tag_proposed }}.tar.gz.asc"
-        mode: 0640
+        mode: "0640"
         owner: root
         group: root
       register: element_gpg_sig
@@ -44,7 +53,7 @@
       ansible.builtin.get_url:
         url: "https://github.com/vector-im/element-web/releases/download/{{ element_tag_proposed }}/element-{{ element_tag_proposed }}.tar.gz"
         dest: "/opt/element-{{ element_tag_proposed }}.tar.gz"
-        mode: 0640
+        mode: "0640"
         owner: root
         group: root
       register: element_tgz
